@@ -1,12 +1,12 @@
 import React from "react";
 import Welcome from "./components/WelcomeMessage";
+import { LayoutStyle } from "./components/styles/Layout";
 
 function App() {
   return (
-    <div>
+    <LayoutStyle>
       <Welcome />
-      <p>Test</p>
-    </div>
+    </LayoutStyle>
   );
 }
 
