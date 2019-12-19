@@ -13,7 +13,7 @@ export default function CoinGrid() {
   return (
     <CoinGridStyled>
       {Object.keys(state.coinList).map(item => (
-        <div>{item}</div>
+        <div key={item}>{item}</div>
       ))}
     </CoinGridStyled>
   );
