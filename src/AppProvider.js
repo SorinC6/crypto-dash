@@ -1,13 +1,16 @@
-import React, { useReducer, createContext } from "react";
+import React, { useReducer, createContext, useEffect } from "react";
 // import initalState from "./initialState";
+const cc = require("cryptocompare");
 
 const CHANGE_PAGE_NAME = "CHANGE_PAGE_NAME";
 const FIRST_VIZIT = "FIRST_VIZIT";
 const CONFIRM_FAVORITS = "CONFIRM_FAVORITS";
+const SET_COIN_LIST = "SET_COIN_LIST";
 
 const initialState = {
   page: "dashboard",
-  firstVizit: false
+  firstVizit: false,
+  coinList: null
 };
 
 export const AppContext = createContext();
@@ -31,6 +34,11 @@ const reducer = (state, { type, payload }) => {
         page: "dashboard",
         firstVizit: false
       };
+    case SET_COIN_LIST:
+      return {
+        ...state,
+        coinList: payload
+      };
     default:
       return state;
   }
@@ -38,6 +46,16 @@ const reducer = (state, { type, payload }) => {
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    fetchCoins();
+  }, []);
+
+  const fetchCoins = async () => {
+    let coinList = (await cc.coinList()).Data;
+    dispatch({ type: SET_COIN_LIST, payload: coinList });
+    console.log(typeof coinList);
+  };
 
   const setPage = name => {
     dispatch({ type: CHANGE_PAGE_NAME, payload: name });
