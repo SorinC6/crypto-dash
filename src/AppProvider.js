@@ -2,9 +2,12 @@ import React, { useReducer, createContext } from "react";
 // import initalState from "./initialState";
 
 const CHANGE_PAGE_NAME = "CHANGE_PAGE_NAME";
+const FIRST_VIZIT = "FIRST_VIZIT";
+const CONFIRM_FAVORITS = "CONFIRM_FAVORITS";
 
 const initialState = {
-  page: "dashboard"
+  page: "dashboard",
+  firstVizit: false
 };
 
 export const AppContext = createContext();
@@ -15,6 +18,18 @@ const reducer = (state, { type, payload }) => {
       return {
         ...state,
         page: payload
+      };
+    case FIRST_VIZIT:
+      return {
+        ...state,
+        page: payload.page,
+        firstVizit: payload.firstVizit
+      };
+    case CONFIRM_FAVORITS:
+      return {
+        ...state,
+        page: "dashboard",
+        firstVizit: false
       };
     default:
       return state;
@@ -28,7 +43,24 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CHANGE_PAGE_NAME, payload: name });
   };
 
-  const value = { state, setPage };
+  const saveSettings = () => {
+    let cryptoDashData = JSON.parse(localStorage.getItem("cryptoDash"));
+    if (!cryptoDashData) {
+      dispatch({
+        type: FIRST_VIZIT,
+        payload: { page: "settings", firstVizit: true }
+      });
+    }
+    return {};
+  };
+
+  const confirmFavorits = () => {
+    console.log("CONFIRMMMM");
+    dispatch({ type: CONFIRM_FAVORITS });
+    localStorage.setItem("cryptoDash", JSON.stringify({ test: "Test Local " }));
+  };
+
+  const value = { state, setPage, saveSettings, confirmFavorits };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
