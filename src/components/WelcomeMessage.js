@@ -3,7 +3,6 @@ import { AppContext } from "../AppProvider";
 
 export default function WelcomeMessage() {
   const { state } = useContext(AppContext);
-  console.log(state.firstVizit);
   return (
     <>
       {state.firstVizit && (

@@ -54,7 +54,6 @@ const AppProvider = ({ children }) => {
   const fetchCoins = async () => {
     let coinList = (await cc.coinList()).Data;
     dispatch({ type: SET_COIN_LIST, payload: coinList });
-    console.log(typeof coinList);
   };
 
   const setPage = name => {
@@ -73,7 +72,6 @@ const AppProvider = ({ children }) => {
   };
 
   const confirmFavorits = () => {
-    console.log("CONFIRMMMM");
     dispatch({ type: CONFIRM_FAVORITS });
     localStorage.setItem("cryptoDash", JSON.stringify({ test: "Test Local " }));
   };

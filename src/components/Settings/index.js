@@ -3,11 +3,11 @@ import { AppContext } from "../../AppProvider";
 import WelcomeMessage from "../WelcomeMessage";
 import ConfirmButton from "./ConfirmButton";
 import Page from "../Shared/Page";
+import CoinGrid from "./CoinGrid";
 
 export default function Index() {
   const { saveSettings } = useContext(AppContext);
 
-  console.log(saveSettings);
   useEffect(() => {
     saveSettings();
   }, []);
@@ -16,6 +16,7 @@ export default function Index() {
     <Page name="settings">
       <WelcomeMessage />
       <ConfirmButton />
+      <CoinGrid />
     </Page>
   );
 }
