@@ -10,12 +10,14 @@ const SET_COIN_LIST = "SET_COIN_LIST";
 const ADD_COIN_TO_FAVORITES = "ADD_COIN_TO_FAVORITES";
 const REMOVE_COIN_FROM_FAVORITES = "REMOVE_COIN_FROM_FAVORITES";
 const SAVE_FROM_LOCALSTORAGE = "SAVE_FROM_LOCALSTORAGE";
+const SET_FILTERED_COIN = "SET_FILTERED_COIN";
 
 const initialState = {
   page: "dashboard",
   firstVizit: false,
   coinList: null,
-  favorites: ["BTC", "ETH", "DOGE"]
+  favorites: ["BTC", "ETH", "DOGE"],
+  filteredCoins: null
 };
 
 export const AppContext = createContext();
@@ -58,6 +60,11 @@ const reducer = (state, { type, payload }) => {
       return {
         ...state,
         favorites: payload
+      };
+    case SET_FILTERED_COIN:
+      return {
+        ...state,
+        filteredCoins: payload
       };
     default:
       return state;
@@ -119,6 +126,11 @@ const AppProvider = ({ children }) => {
     return _.includes(state.favorites, key);
   };
 
+  const setFilteredCoins = filteredCoins => {
+    console.log(filteredCoins);
+    dispatch({ type: SET_FILTERED_COIN, payload: filteredCoins });
+  };
+
   const value = {
     state,
     setPage,
@@ -126,7 +138,8 @@ const AppProvider = ({ children }) => {
     confirmFavorits,
     addCoin,
     removeCoin,
-    isInFavorites
+    isInFavorites,
+    setFilteredCoins
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
