@@ -3,5 +3,12 @@ import { AppContext } from "../../AppProvider";
 
 export default function Content({ children }) {
   const { state } = useContext(AppContext);
-  return <>{!state.coinList ? <div>Loading Coins</div> : <>{children}</>}</>;
+
+  if (!state.coinList) {
+    return <div>Loading coins...</div>;
+  }
+  if (!state.firstVizit && !state.prices) {
+    return <div>Loading Prices...</div>;
+  }
+  return <>{children}</>;
 }

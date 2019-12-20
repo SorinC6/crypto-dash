@@ -11,6 +11,7 @@ const ADD_COIN_TO_FAVORITES = "ADD_COIN_TO_FAVORITES";
 const REMOVE_COIN_FROM_FAVORITES = "REMOVE_COIN_FROM_FAVORITES";
 const SAVE_FROM_LOCALSTORAGE = "SAVE_FROM_LOCALSTORAGE";
 const SET_FILTERED_COIN = "SET_FILTERED_COIN";
+const SET_PRICES = "SET_PRICES";
 
 const initialState = {
   page: "dashboard",
@@ -66,6 +67,11 @@ const reducer = (state, { type, payload }) => {
         ...state,
         filteredCoins: payload
       };
+    case SET_PRICES:
+      return {
+        ...state,
+        prices: payload
+      };
     default:
       return state;
   }
@@ -77,7 +83,35 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     fetchCoins();
+    fetchPrices();
   }, []);
+
+  useEffect(() => {
+    fetchPrices();
+  }, [state.page]);
+
+  const fetchPrices = async () => {
+    if (state.firstVizit) {
+      return;
+    }
+    let prices = await pricesFunc();
+    prices = prices.filter(price => Object.keys(price).length);
+    console.log(prices);
+    dispatch({ type: SET_PRICES, payload: prices });
+  };
+
+  const pricesFunc = async () => {
+    let returnData = [];
+    for (let i = 0; i < state.favorites.length; i++) {
+      try {
+        let priceData = await cc.priceFull(state.favorites[i], "USD");
+        returnData.push(priceData);
+      } catch (e) {
+        console.warn("Fetch price error:", e);
+      }
+    }
+    return returnData;
+  };
 
   const fetchCoins = async () => {
     let coinList = (await cc.coinList()).Data;
