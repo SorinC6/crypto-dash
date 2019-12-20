@@ -12,13 +12,15 @@ const REMOVE_COIN_FROM_FAVORITES = "REMOVE_COIN_FROM_FAVORITES";
 const SAVE_FROM_LOCALSTORAGE = "SAVE_FROM_LOCALSTORAGE";
 const SET_FILTERED_COIN = "SET_FILTERED_COIN";
 const SET_PRICES = "SET_PRICES";
+const SET_CURRENT_FAVORITE = "SET_CURRENT_FAVORITE";
 
 const initialState = {
   page: "dashboard",
   firstVizit: false,
   coinList: null,
-  favorites: ["BTC", "ETH", "DOGE"],
-  filteredCoins: null
+  favorites: [],
+  filteredCoins: null,
+  currentFavorites: null
 };
 
 export const AppContext = createContext();
@@ -50,7 +52,8 @@ const reducer = (state, { type, payload }) => {
     case ADD_COIN_TO_FAVORITES:
       return {
         ...state,
-        favorites: [...new Set([...state.favorites, payload])]
+        // favorites: [...new Set([...state.favorites, payload])]
+        favorites: [...state.favorites, payload]
       };
     case REMOVE_COIN_FROM_FAVORITES:
       return {
@@ -60,7 +63,8 @@ const reducer = (state, { type, payload }) => {
     case SAVE_FROM_LOCALSTORAGE:
       return {
         ...state,
-        favorites: payload
+        favorites: payload.favorites,
+        currentFavorites: payload.currentFavorites
       };
     case SET_FILTERED_COIN:
       return {
@@ -72,6 +76,11 @@ const reducer = (state, { type, payload }) => {
         ...state,
         prices: payload
       };
+    case SET_CURRENT_FAVORITE:
+      return {
+        ...state,
+        currentFavorites: payload
+      };
     default:
       return state;
   }
@@ -82,13 +91,13 @@ const AppProvider = ({ children }) => {
   const MAX_FAVORITES = 10;
 
   useEffect(() => {
-    fetchCoins();
     fetchPrices();
+    fetchCoins();
   }, []);
 
   useEffect(() => {
     fetchPrices();
-  }, [state.page]);
+  }, [state.page, state.favorites]);
 
   const fetchPrices = async () => {
     if (state.firstVizit) {
@@ -96,7 +105,6 @@ const AppProvider = ({ children }) => {
     }
     let prices = await pricesFunc();
     prices = prices.filter(price => Object.keys(price).length);
-    console.log(prices);
     dispatch({ type: SET_PRICES, payload: prices });
   };
 
@@ -104,7 +112,7 @@ const AppProvider = ({ children }) => {
     let returnData = [];
     for (let i = 0; i < state.favorites.length; i++) {
       try {
-        let priceData = await cc.priceFull(state.favorites[i], "USD");
+        let priceData = await cc.priceFull(state.favorites[i], ["USD"]);
         returnData.push(priceData);
       } catch (e) {
         console.warn("Fetch price error:", e);
@@ -122,6 +130,17 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CHANGE_PAGE_NAME, payload: name });
   };
 
+  const setCurrentFavorite = sym => {
+    dispatch({ type: SET_CURRENT_FAVORITE, payload: sym });
+    localStorage.setItem(
+      "cryptoDash",
+      JSON.stringify({
+        ...JSON.parse(localStorage.getItem("cryptoDash")),
+        currentFavorites: sym
+      })
+    );
+  };
+
   const saveSettings = () => {
     let cryptoDashData = JSON.parse(localStorage.getItem("cryptoDash"));
     if (!cryptoDashData) {
@@ -130,8 +149,11 @@ const AppProvider = ({ children }) => {
         payload: { page: "settings", firstVizit: true }
       });
     } else {
-      let { favorites } = cryptoDashData;
-      dispatch({ type: SAVE_FROM_LOCALSTORAGE, payload: favorites });
+      let { favorites, currentFavorites } = cryptoDashData;
+      dispatch({
+        type: SAVE_FROM_LOCALSTORAGE,
+        payload: { favorites, currentFavorites }
+      });
     }
   };
 
@@ -143,15 +165,15 @@ const AppProvider = ({ children }) => {
   };
 
   const removeCoin = key => {
-    console.log(key);
     dispatch({ type: REMOVE_COIN_FROM_FAVORITES, payload: key });
   };
 
   const confirmFavorits = () => {
-    dispatch({ type: CONFIRM_FAVORITS });
+    let currentFavorites = state.favorites[0];
+    dispatch({ type: CONFIRM_FAVORITS, payload: currentFavorites });
     localStorage.setItem(
       "cryptoDash",
-      JSON.stringify({ favorites: state.favorites })
+      JSON.stringify({ favorites: state.favorites, currentFavorites })
     );
   };
 
@@ -173,7 +195,9 @@ const AppProvider = ({ children }) => {
     addCoin,
     removeCoin,
     isInFavorites,
-    setFilteredCoins
+    setFilteredCoins,
+    fetchPrices,
+    setCurrentFavorite
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
