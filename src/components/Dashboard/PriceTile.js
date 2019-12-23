@@ -94,7 +94,6 @@ const PriceTileCompact = ({
 
 export default function PriceTile({ price, index }) {
   const { state, setCurrentFavorite } = useContext(AppContext);
-  console.log(state.currentFavorites);
   let sym = Object.keys(price)[0];
   let data = price[sym]["USD"];
   let TileClass = index < 5 ? PriceHelper : PriceTileCompact;
