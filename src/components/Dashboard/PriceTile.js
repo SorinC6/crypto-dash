@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { AppContext } from "../../AppProvider";
 import styled, { css } from "styled-components";
 import { SelectableTile } from "../Shared/Tile";
@@ -98,6 +98,8 @@ export default function PriceTile({ price, index }) {
   let sym = Object.keys(price)[0];
   let data = price[sym]["USD"];
   let TileClass = index < 5 ? PriceHelper : PriceTileCompact;
+
+  useEffect(() => {}, []);
   return (
     <TileClass
       data={data}

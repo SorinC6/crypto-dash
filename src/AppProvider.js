@@ -42,7 +42,8 @@ const reducer = (state, { type, payload }) => {
       return {
         ...state,
         page: "dashboard",
-        firstVizit: false
+        firstVizit: false,
+        currentFavorites: payload
       };
     case SET_COIN_LIST:
       return {
@@ -150,6 +151,7 @@ const AppProvider = ({ children }) => {
       });
     } else {
       let { favorites, currentFavorites } = cryptoDashData;
+      console.log(currentFavorites);
       dispatch({
         type: SAVE_FROM_LOCALSTORAGE,
         payload: { favorites, currentFavorites }
