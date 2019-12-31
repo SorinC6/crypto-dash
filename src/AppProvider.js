@@ -1,7 +1,11 @@
 import React, { useReducer, createContext, useEffect } from "react";
 import _ from "lodash";
 // import initalState from "./initialState";
+import moment from "moment";
 const cc = require("cryptocompare");
+cc.setApiKey(
+  "c90a230d4d047aef6ddcdee5c659f9c1bf5577078c7088b5458e8be058a71604"
+);
 
 const CHANGE_PAGE_NAME = "CHANGE_PAGE_NAME";
 const FIRST_VIZIT = "FIRST_VIZIT";
@@ -13,6 +17,7 @@ const SAVE_FROM_LOCALSTORAGE = "SAVE_FROM_LOCALSTORAGE";
 const SET_FILTERED_COIN = "SET_FILTERED_COIN";
 const SET_PRICES = "SET_PRICES";
 const SET_CURRENT_FAVORITE = "SET_CURRENT_FAVORITE";
+const SET_HISTO_DATA = "SET_HISTO_DATA";
 
 const initialState = {
   page: "dashboard",
@@ -20,7 +25,8 @@ const initialState = {
   coinList: null,
   favorites: [],
   filteredCoins: null,
-  currentFavorites: null
+  currentFavorites: null,
+  histo: null
 };
 
 export const AppContext = createContext();
@@ -82,6 +88,11 @@ const reducer = (state, { type, payload }) => {
         ...state,
         currentFavorites: payload
       };
+    case SET_HISTO_DATA:
+      return {
+        ...state,
+        histo: payload
+      };
     default:
       return state;
   }
@@ -90,15 +101,57 @@ const reducer = (state, { type, payload }) => {
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const MAX_FAVORITES = 10;
+  const TIME_UNITS = 10;
 
   useEffect(() => {
     fetchPrices();
     fetchCoins();
+    //fetchHistorical();
   }, []);
 
   useEffect(() => {
     fetchPrices();
-  }, [state.page, state.favorites]);
+    fetchHistorical();
+  }, [state.page, state.favorites, state.currentFavorites]);
+
+  useEffect(() => {}, []);
+
+  const fetchHistorical = async () => {
+    // if (state.firstVizit) return;
+    let result = await historical();
+    console.log(result);
+    let histo = [
+      {
+        name: state.currentFavorites,
+        data: result.map((item, index) => {
+          return [
+            moment()
+              .subtract({ months: TIME_UNITS - index })
+              .valueOf(),
+            item.USD
+          ];
+        })
+      }
+    ];
+    dispatch({ type: "SET_HISTO_DATA", payload: histo });
+  };
+
+  const historical = () => {
+    console.log(state.currentFavorites);
+    let promises = [];
+    for (let units = TIME_UNITS; units > 0; units--) {
+      promises.push(
+        cc.priceHistorical(
+          state.currentFavorites,
+          ["USD"],
+          moment()
+            .subtract({ months: units })
+            .toDate()
+        )
+      );
+    }
+    return Promise.all(promises);
+  };
 
   const fetchPrices = async () => {
     if (state.firstVizit) {
@@ -151,7 +204,6 @@ const AppProvider = ({ children }) => {
       });
     } else {
       let { favorites, currentFavorites } = cryptoDashData;
-      console.log(currentFavorites);
       dispatch({
         type: SAVE_FROM_LOCALSTORAGE,
         payload: { favorites, currentFavorites }
@@ -185,7 +237,6 @@ const AppProvider = ({ children }) => {
   };
 
   const setFilteredCoins = filteredCoins => {
-    console.log(filteredCoins);
     dispatch({ type: SET_FILTERED_COIN, payload: filteredCoins });
   };
 

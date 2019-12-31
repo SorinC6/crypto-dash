@@ -16,7 +16,6 @@ const ImageWrapper = styled.img`
 `;
 
 export default function CoinImage({ coin, spotlight }) {
-  console.log(spotlight);
   return (
     <ImageWrapper
       src={coin && `http://cryptocompare.com/${coin.ImageUrl}`}
