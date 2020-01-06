@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/crypto-dash/static/css/main.1f9172b1.chunk.css",
+    "main.js": "/crypto-dash/static/js/main.c0c4bd00.chunk.js",
+    "main.js.map": "/crypto-dash/static/js/main.c0c4bd00.chunk.js.map",
+    "runtime-main.js": "/crypto-dash/static/js/runtime-main.1d105a33.js",
+    "runtime-main.js.map": "/crypto-dash/static/js/runtime-main.1d105a33.js.map",
+    "static/js/2.436655bb.chunk.js": "/crypto-dash/static/js/2.436655bb.chunk.js",
+    "static/js/2.436655bb.chunk.js.map": "/crypto-dash/static/js/2.436655bb.chunk.js.map",
+    "index.html": "/crypto-dash/index.html",
+    "precache-manifest.e20616889f11d1fed915a31a58b52c4d.js": "/crypto-dash/precache-manifest.e20616889f11d1fed915a31a58b52c4d.js",
+    "service-worker.js": "/crypto-dash/service-worker.js",
+    "static/css/main.1f9172b1.chunk.css.map": "/crypto-dash/static/css/main.1f9172b1.chunk.css.map",
+    "static/js/2.436655bb.chunk.js.LICENSE": "/crypto-dash/static/js/2.436655bb.chunk.js.LICENSE"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.1d105a33.js",
+    "static/js/2.436655bb.chunk.js",
+    "static/css/main.1f9172b1.chunk.css",
+    "static/js/main.c0c4bd00.chunk.js"
+  ]
+}
