@@ -18,6 +18,7 @@ const SET_FILTERED_COIN = "SET_FILTERED_COIN";
 const SET_PRICES = "SET_PRICES";
 const SET_CURRENT_FAVORITE = "SET_CURRENT_FAVORITE";
 const SET_HISTO_DATA = "SET_HISTO_DATA";
+const CHART_SELECT = "CHART_SELECT";
 
 const initialState = {
   page: "dashboard",
@@ -26,7 +27,8 @@ const initialState = {
   favorites: [],
   filteredCoins: null,
   currentFavorites: null,
-  histo: null
+  histo: null,
+  timeInterval: "months"
 };
 
 export const AppContext = createContext();
@@ -94,6 +96,12 @@ const reducer = (state, { type, payload }) => {
         ...state,
         histo: payload
       };
+    case CHART_SELECT:
+      return {
+        ...state,
+        timeInterval: payload,
+        histo: null
+      };
     default:
       return state;
   }
@@ -117,21 +125,20 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     fetchHistorical();
-  }, [state.favorites, state.currentFavorites]);
+  }, [state.favorites, state.currentFavorites, state.timeInterval]);
 
   useEffect(() => {}, []);
 
   const fetchHistorical = async () => {
     // if (state.firstVizit) return;
     let result = await historical();
-    console.log(result);
     let histo = [
       {
         name: state.currentFavorites,
         data: result.map((item, index) => {
           return [
             moment()
-              .subtract({ months: TIME_UNITS - index })
+              .subtract({ [state.timeInterval]: TIME_UNITS - index })
               .valueOf(),
             item.USD
           ];
@@ -150,7 +157,7 @@ const AppProvider = ({ children }) => {
           state.currentFavorites,
           ["USD"],
           moment()
-            .subtract({ months: units })
+            .subtract({ [state.timeInterval]: units })
             .toDate()
         )
       );
@@ -245,6 +252,11 @@ const AppProvider = ({ children }) => {
     dispatch({ type: SET_FILTERED_COIN, payload: filteredCoins });
   };
 
+  const changeChartSelect = option => {
+    console.log(option);
+    dispatch({ type: CHART_SELECT, payload: option });
+  };
+
   const value = {
     state,
     setPage,
@@ -255,7 +267,8 @@ const AppProvider = ({ children }) => {
     isInFavorites,
     setFilteredCoins,
     fetchPrices,
-    setCurrentFavorite
+    setCurrentFavorite,
+    changeChartSelect
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

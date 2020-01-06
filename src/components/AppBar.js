@@ -18,6 +18,11 @@ const ControlButtonWrapper = styled.div`
     css`
       text-shadow: 1px 1px 2px red, 0 0 25px red, 0 0 5px white;
     `}
+  ${props =>
+    props.hidden &&
+    css`
+      display: none;
+    `}
 `;
 
 const toUpperCase = string => {
@@ -25,11 +30,12 @@ const toUpperCase = string => {
 };
 
 const ControlButton = ({ name }) => {
-  const { state, setPage } = useContext(AppContext);
+  const { state, setPage, firstVizit } = useContext(AppContext);
   return (
     <ControlButtonWrapper
       onClick={() => setPage(name)}
       active={state.page === name}
+      //hidden={state.firstVizit && state.page === "dashboard"}
     >
       {toUpperCase(name)}
     </ControlButtonWrapper>
