@@ -86,7 +86,8 @@ const reducer = (state, { type, payload }) => {
     case SET_CURRENT_FAVORITE:
       return {
         ...state,
-        currentFavorites: payload
+        currentFavorites: payload,
+        histo: null
       };
     case SET_HISTO_DATA:
       return {
@@ -111,8 +112,12 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     fetchPrices();
+    // fetchHistorical();
+  }, [state.page]);
+
+  useEffect(() => {
     fetchHistorical();
-  }, [state.page, state.favorites, state.currentFavorites]);
+  }, [state.favorites, state.currentFavorites]);
 
   useEffect(() => {}, []);
 

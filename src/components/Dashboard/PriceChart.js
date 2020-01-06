@@ -10,7 +10,11 @@ export default function PriceChart() {
   const { state } = useContext(AppContext);
   return (
     <Tile>
-      <ReactHighcharts config={config(state.histo)}></ReactHighcharts>
+      {state.histo ? (
+        <ReactHighcharts config={config(state.histo)}></ReactHighcharts>
+      ) : (
+        <div>Loading Chart</div>
+      )}
     </Tile>
   );
 }
