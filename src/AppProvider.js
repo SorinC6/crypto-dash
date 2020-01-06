@@ -114,8 +114,8 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     fetchPrices();
-    fetchCoins();
-    //fetchHistorical();
+    // fetchCoins();
+    // fetchHistorical();
   }, []);
 
   useEffect(() => {
@@ -149,7 +149,6 @@ const AppProvider = ({ children }) => {
   };
 
   const historical = () => {
-    console.log(state.currentFavorites);
     let promises = [];
     for (let units = TIME_UNITS; units > 0; units--) {
       promises.push(
@@ -253,7 +252,6 @@ const AppProvider = ({ children }) => {
   };
 
   const changeChartSelect = option => {
-    console.log(option);
     dispatch({ type: CHART_SELECT, payload: option });
   };
 
